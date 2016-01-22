@@ -12,7 +12,7 @@ def AvgToX( *pArgs ):
     Selected = cmds.ls(selection = True, fl = True) # Gets Selection, Returns Flattened
     print Selected                                  
     
-    PosX = []      # Declare a List to store Y location values for each vertex  
+    PosX = []      # Declare a List to store X location values for each vertex  
     
     for component in Selected:
         SelectedPosition = cmds.xform(component, q = True, ws = True, t = True) # Get the Location of each Vertex
@@ -56,7 +56,7 @@ def AvgToZ( *pArgs ):
     Selected = cmds.ls(selection = True, fl = True) # Gets Selection, Returns Flattened
     print Selected                                  
     
-    PosZ = []      # Declare a List to store Y location values for each vertex  
+    PosZ = []      # Declare a List to store Z location values for each vertex  
     
     for component in Selected:
         SelectedPosition = cmds.xform(component, q = True, ws = True, t = True) # Get the Location of each Vertex
