@@ -75,7 +75,7 @@ def AvgToZ( *pArgs ):
     
 def createUI (pWindowTitle):
     
-    windowID = 'myWindowID'
+    windowID = 'AvgWindowID'
     
     if cmds.window( windowID, exists = True ):
         cmds.deleteUI( windowID )
