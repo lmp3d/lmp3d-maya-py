@@ -1,7 +1,7 @@
 # noiseGen.py
 # Leif Peterson 2016
 #
-#LMP3D Python Scripts version 1.0
+# LMP3D Python Scripts version 1.0
 #
 # The Following Maya Python Script is intended to be used to generate Simple Noise
 
@@ -10,11 +10,11 @@ import functools
 import random
 
 def addNoise( xD = 1.0, yD = 1.0, zD = 1.0, nF = 1.0 ):
-    xDisplace = xD # Placeholder until UI is implemented
-    yDisplace = yD # Placeholder until UI is implemented
-    zDisplace = zD # Placeholder until UI is implemented
+    xDisplace = xD # X Dispacement Amount
+    yDisplace = yD # Y Dispacement Amount
+    zDisplace = zD # Z Dispacement Amount
     
-    noiseFactor = nF # Placeholder until UI is implemented - will range from 0.0 to 1.0
+    noiseFactor = nF # A Multiplier to Scale the Amount of Noise. 
     
     # Get Selection, Convert to Vertices 
     Selection = cmds.ls( selection = True, fl=True )
@@ -24,6 +24,7 @@ def addNoise( xD = 1.0, yD = 1.0, zD = 1.0, nF = 1.0 ):
     for index in range(len(vtxSelection)):
         cmds.move( random.uniform(-noiseFactor*xDisplace, noiseFactor*xDisplace), random.uniform(-noiseFactor*yDisplace, noiseFactor*yDisplace), random.uniform(-noiseFactor*zDisplace, noiseFactor*zDisplace), vtxSelection[index], r=True )
        
+# Window Creation Function
 def createNoiseUI(pWindowTitle, pApplyCallback):
 
     windowID = 'NoiseWindowID'
