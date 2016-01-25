@@ -49,3 +49,4 @@ for Object in range(len(SelectedObjects)):
     pm.polySelectConstraint( angle=1, type=0x0001, mode=3, anglebound=[ 91.0, 181.0 ] )
     pm.select()
     pm.polyDelVertex()
+    pm.polySelectConstraint( angle=0 )
