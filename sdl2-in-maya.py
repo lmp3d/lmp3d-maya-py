@@ -8,18 +8,43 @@ import sdl2
 import sdl2.ext
 
 # define structures to store 2D and 3D floating point values
-class Vector3(Structure):
+class FlVector3(Structure):
     _fields_=[("x", c_float), ("y", c_float), ("z", c_float)]
+
+class IntVector3(Structure):
+    _fields_=[("x", c_int), ("y", c_int), ("z", c_int)]
     
-class Vector2(Structure):
+class IntVector2(Structure):
     _fields_=[("x", c_int), ("y", c_int)]
     
-#def normalize_axis( ):
-        
+class FlVector2(Structure):
+    _fields_=[("x", c_float), ("y", c_float)]    
+
+def RemapMovement( RawMoveX, RawMoveY ):
+    NormX = 0.0
+    NormY = 0.0
+    NormalMove = FlVector2( NormX, NormY )
+    RawX = RawMoveX
+    RawY = RawMoveY
+    # Dead Zone is between -4500 and 4500
+    # Convert the integer a value between -1 and 1
+    if abs(RawX) < 4500 :
+        NormX = 0.0
+    elif abs(RawX) > 4500:
+        NormX = ((float(RawX) - (-32768.0)) / (32767.0 - (-32768))) * ( 1.0 - (-1.0)) + (-1.0)       
+    if abs(RawY) < 4500 :
+        NormY = 0.0
+    elif abs(RawY) > 4500:
+        NormY = ((float(RawY) - (-32768.0)) / (32767.0 - (-32768))) * ( 1.0 - (-1.0)) + (-1.0)
+    # Build the normalized move vector 
+    NormalMove.x = NormX
+    NormalMove.y = NormY
+    return NormalMove
+            
 
 def run():
     
-    RawMovementVector = Vector2( 0, 0 )
+    RawMovementVector = IntVector2( 0, 0 )
     
     # Init SDL
     if sdl2.SDL_Init(sdl2.SDL_INIT_TIMER|sdl2.SDL_INIT_GAMECONTROLLER|sdl2.SDL_INIT_EVENTS) != 0:
@@ -65,9 +90,11 @@ def run():
                     ButtonPressed = False
                     break
                         
-        print RawMovementVector.x, RawMovementVector.y, ButtonPressed
+        #print RawMovementVector.x, RawMovementVector.y, ButtonPressed
         
-        sdl2.SDL_Delay(20)
+        # Remap Raw Movement to -1 to 1 in float
+        Movement = RemapMovement( RawMovementVector.x, RawMovementVector.y )
+        sdl2.SDL_Delay(15)
          
             
     sdl2.SDL_DestroyWindow(ctrlWindow)
