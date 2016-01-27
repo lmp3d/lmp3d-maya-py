@@ -28,13 +28,13 @@ def RemapMovement( RawMoveX, RawMoveY ):
     RawY = RawMoveY
     # Dead Zone is between -4500 and 4500
     # Convert the integer a value between -1 and 1
-    if abs(RawX) < 4500 :
+    if abs(RawX) < 6000 :
         NormX = 0.0
-    elif abs(RawX) > 4500:
+    elif abs(RawX) > 6000:
         NormX = ((float(RawX) - (-32768.0)) / (32767.0 - (-32768))) * ( 1.0 - (-1.0)) + (-1.0)       
-    if abs(RawY) < 4500 :
+    if abs(RawY) < 6000 :
         NormY = 0.0
-    elif abs(RawY) > 4500:
+    elif abs(RawY) > 6000:
         NormY = ((float(RawY) - (-32768.0)) / (32767.0 - (-32768))) * ( 1.0 - (-1.0)) + (-1.0)
     # Build the normalized move vector 
     NormalMove.x = NormX
@@ -91,11 +91,10 @@ def run():
                     break
                         
         #print RawMovementVector.x, RawMovementVector.y, ButtonPressed
-        
         # Remap Raw Movement to -1 to 1 in float
         Movement = RemapMovement( RawMovementVector.x, RawMovementVector.y )
-        sdl2.SDL_Delay(15)
-         
+        print Movement.x, Movement.y
+        sdl2.SDL_Delay(15)      
             
     sdl2.SDL_DestroyWindow(ctrlWindow)
     sdl2.SDL_Quit()
