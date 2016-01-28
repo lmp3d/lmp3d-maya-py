@@ -1,3 +1,7 @@
+# mayaGame.py
+# Leif Peterson 2016
+#
+# Implements Input and Game Loop inside Maya Viewport.
 import pymel.core as pm
 import os
 import sys
