@@ -5,6 +5,7 @@
 import pymel.core as pm
 import os
 import sys
+import time
 import ctypes
 from ctypes import *
 import collections
@@ -88,11 +89,24 @@ def run():
         return -1
     else:
         pm.polyColorPerVertex( player, colorRGB=(1.0,0.0,0.0), alpha=1.0, notUndoable=True )
+    pSpeed = 10.0
     
+    # Start Ticks
+    lastTime = 0
+    cTime = sdl2.SDL_GetTicks()
     
     # Start Game Loop
     running = True    
     while running:
+        #Calculate Delta Time
+        lastTime = cTime
+        cTime = sdl2.SDL_GetTicks()
+        dTime = cTime - lastTime
+        if dTime > 16:
+            dTime = 16
+        
+        deltaM = float(dTime)/float(1000)
+              
         ButtonPressed = False
         # Process Input
         evnt = sdl2.SDL_Event()
@@ -119,15 +133,13 @@ def run():
         #print RawMovementVector.x, RawMovementVector.y, ButtonPressed
         # Remap Raw Movement to -1 to 1 in float
         Movement = RemapMovement( RawMovementVector.x, RawMovementVector.y )
-        print Movement.x, Movement.y
-        pm.move( "Player", [ Movement.x, 0.0, Movement.y ], r=True, wd=True )
+        #print Movement.x, Movement.y
+        pMoveX = Movement.x * (deltaM*pSpeed)
+        pMoveY = Movement.y * (deltaM*pSpeed)
+        pm.move( "Player", [ pMoveX, 0.0, pMoveY ], r=True, wd=True )
         pm.refresh( cv=True )
-        sdl2.SDL_Delay(15)      
+             
             
     sdl2.SDL_DestroyWindow(ctrlWindow)
     sdl2.SDL_Quit()
     return 0
-        
-#ticks = sdl2.SDL_GetTicks()
-#print ticks
-#sdl2.SDL_WINDOW_HIDDEN
