@@ -88,7 +88,13 @@ def run():
         print "ERROR! Player not created!"
         return -1
     else:
-        pm.polyColorPerVertex( player, colorRGB=(1.0,0.0,0.0), alpha=1.0, notUndoable=True )
+        pm.selectType( pv=True )
+        pm.polySelectConstraint( type=0x0001, mode=3 )
+        pm.select()
+        pVs = pm.ls( selection=True, fl=True )
+        pm.select( cl=True )
+        for v in range(len(pVs)):
+            pm.polyColorPerVertex( pVs[v], colorRGB=(1.0,0.0,0.0), alpha=1.0, cdo=True, notUndoable=True )
     pSpeed = 10.0
     
     # Start Ticks
@@ -143,3 +149,5 @@ def run():
     sdl2.SDL_DestroyWindow(ctrlWindow)
     sdl2.SDL_Quit()
     return 0
+        
+#sdl2.SDL_WINDOW_HIDDEN
