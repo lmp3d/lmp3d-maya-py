@@ -116,7 +116,7 @@ def run():
         # Remap Raw Movement to -1 to 1 in float
         Movement = RemapMovement( RawMovementVector.x, RawMovementVector.y )
         print Movement.x, Movement.y
-        pm.xform( player, r=True, wd=True, t=[ Movement.x, 0.0, Movement.y ] )
+        pm.move( "Player", [ Movement.x, 0.0, Movement.y ], r=True, wd=True )
         sdl2.SDL_Delay(15)      
             
     sdl2.SDL_DestroyWindow(ctrlWindow)
@@ -129,5 +129,6 @@ def run():
 
 run()
 
+print player
 
 sdl2.SDL_Quit()
