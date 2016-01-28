@@ -117,6 +117,7 @@ def run():
         Movement = RemapMovement( RawMovementVector.x, RawMovementVector.y )
         print Movement.x, Movement.y
         pm.move( "Player", [ Movement.x, 0.0, Movement.y ], r=True, wd=True )
+        pm.refresh( cv=True )
         sdl2.SDL_Delay(15)      
             
     sdl2.SDL_DestroyWindow(ctrlWindow)
@@ -126,9 +127,3 @@ def run():
 #ticks = sdl2.SDL_GetTicks()
 #print ticks
 #sdl2.SDL_WINDOW_HIDDEN
-
-run()
-
-print player
-
-sdl2.SDL_Quit()
