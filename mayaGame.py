@@ -6,6 +6,7 @@ import pymel.core as pm
 import os
 import sys
 import time
+import math
 import ctypes
 import random
 from ctypes import *
@@ -75,6 +76,15 @@ def dot(u, v):
 def normalize(v):
     vmag = magnitude(v)
     return [ v[i]/vmag  for i in range(len(v)) ]           
+
+# Invert Vector Function
+def reverseV2( movementVector ):
+    iV = FlVector2( 0.0, 0.0 )
+    Vx = movementVector.x
+    Vy = movementVector.y
+    iV.x = -1.0*( Vx )
+    iV.y = -1.0*( Vy )
+    return iV   
 
 # Object Manupliation Functions
 def moveObj( Object, MoveX, MoveY, MoveZ ):
@@ -180,5 +190,5 @@ def run():
     sdl2.SDL_DestroyWindow(ctrlWindow)
     sdl2.SDL_Quit()
     return 0
-    
+        
 #sdl2.SDL_WINDOW_HIDDEN
