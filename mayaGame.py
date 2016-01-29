@@ -7,6 +7,7 @@ import os
 import sys
 import time
 import ctypes
+import random
 from ctypes import *
 import collections
 import sdl2
@@ -27,13 +28,12 @@ class FlVector2(Structure):
 
 # Pawn class - has an object and can move
 #class Pawn:
-    #def __init__(self, speed, mayaObj):
+    #def __init__(self, speed):
         #fSpeed = speed
         #rColor = 1
         #gColor = 0
         #bColor = 0
         #aColor = 1
-        #mObj = mayaObj
         
     #def update(self):
         #pm.xform( mObj[0], r=True, wd=True, t=[ 1.0, 0.0, 1.0] )
@@ -58,7 +58,28 @@ def RemapMovement( RawMoveX, RawMoveY ):
     NormalMove.x = NormX
     NormalMove.y = NormY
     return NormalMove
-            
+
+# Vector Functions
+def magnitude(v):
+    return math.sqrt(sum(v[i]*v[i] for i in range(len(v))))
+
+def add(u, v):
+    return [ u[i]+v[i] for i in range(len(u)) ]
+
+def sub(u, v):
+    return [ u[i]-v[i] for i in range(len(u)) ]
+
+def dot(u, v):
+    return sum(u[i]*v[i] for i in range(len(u)))
+
+def normalize(v):
+    vmag = magnitude(v)
+    return [ v[i]/vmag  for i in range(len(v)) ]           
+
+# Object Manupliation Functions
+#def moveObj()
+
+# Main Game Function
 
 def run():
     
@@ -135,6 +156,10 @@ def run():
                 if evnt.cbutton.button == sdl2.SDL_CONTROLLER_BUTTON_A:
                     ButtonPressed = False
                     break
+            elif evnt.type == sdl2.SDL_KEYDOWN:
+                if evnt.key.keysym.sym == sdl2.SDL_ESCAPE:
+                    sdl2.SDL_Quit()
+                    break
                         
         #print RawMovementVector.x, RawMovementVector.y, ButtonPressed
         # Remap Raw Movement to -1 to 1 in float
@@ -142,7 +167,7 @@ def run():
         #print Movement.x, Movement.y
         pMoveX = Movement.x * (deltaM*pSpeed)
         pMoveY = Movement.y * (deltaM*pSpeed)
-        pm.move( "Player", [ pMoveX, 0.0, pMoveY ], r=True, wd=True )
+        pm.move( player[0], [ pMoveX, 0.0, pMoveY ], r=True, wd=True )
         pm.refresh( cv=True )
              
             
