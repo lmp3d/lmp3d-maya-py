@@ -157,7 +157,8 @@ def run():
                     ButtonPressed = False
                     break
             elif evnt.type == sdl2.SDL_KEYDOWN:
-                if evnt.key.keysym.sym == sdl2.SDL_ESCAPE:
+                if evnt.key.keysym.sym == sdl2.SDLK_ESCAPE:
+                    sdl2.SDL_DestroyWindow(ctrlWindow)
                     sdl2.SDL_Quit()
                     break
                         
