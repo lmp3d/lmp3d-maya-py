@@ -77,7 +77,12 @@ def normalize(v):
     return [ v[i]/vmag  for i in range(len(v)) ]           
 
 # Object Manupliation Functions
-#def moveObj()
+def moveObj( Object, MoveX, MoveY, MoveZ ):
+    obj = Object
+    x = MoveX
+    y = 0.0
+    z = MoveZ
+    pm.move( obj, [ x, y, z ], r=True, wd=True )
 
 # Main Game Function
 
@@ -168,12 +173,12 @@ def run():
         #print Movement.x, Movement.y
         pMoveX = Movement.x * (deltaM*pSpeed)
         pMoveY = Movement.y * (deltaM*pSpeed)
-        pm.move( player[0], [ pMoveX, 0.0, pMoveY ], r=True, wd=True )
+        moveObj( player[0], pMoveX, 0.0, pMoveY)
         pm.refresh( cv=True )
              
             
     sdl2.SDL_DestroyWindow(ctrlWindow)
     sdl2.SDL_Quit()
     return 0
-        
+    
 #sdl2.SDL_WINDOW_HIDDEN
