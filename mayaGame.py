@@ -77,6 +77,25 @@ def normalize(v):
     vmag = magnitude(v)
     return [ v[i]/vmag  for i in range(len(v)) ]           
 
+# AABB Collision Detection Function
+def detectCollision( object1, object2 ):
+    obj1 = object1
+    obj2 = object2
+    rawBB1 = pm.xform( obj1, q=True, bb=True )
+    rawBB2 = pm.xform( obj2, q=True, bb=True )
+    #print rawBB1
+    #print rawBB2
+    if rawBB1[0] > rawBB2[3]:
+        return False
+    if rawBB1[2] > rawBB2[5]:
+        return False
+    if rawBB1[3] < rawBB2[0]:
+        return False
+    if rawBB1[5] < rawBB2[2]:
+        return False
+    else:
+        return True        
+
 # Invert Vector Function
 def reverseV2( movementVector ):
     iV = FlVector2( 0.0, 0.0 )
