@@ -113,8 +113,30 @@ def moveObj( Object, MoveX, MoveY, MoveZ ):
     z = MoveZ
     pm.move( obj, [ x, y, z ], r=True, wd=True )
 
-# Main Game Function
+class Enemy():
+    def __init__(self, minSpawn, maxSpawn):
+        colorRGBV = [1,1,0]
+        rMax = maxSpawn
+        rMin = minSpawn
+        spawnMin = rMin - .01
+        spawnMax = rMax - .01
+        locX = random.uniform(spawnMin, spawnMax)
+        locY = random.uniform(spawnMin, spawnMax)
+        moveVectorX = random.uniform(-3.0,3.0)
+        moveVectorY = random.uniform(-3.0,3.0)
+        mayaObj = pm.polyCube( name="Enemy", w=1, h=1, d=1, cuv=0, ax=(0,1,0), sx=1, sy=1, sz=1 )
+        pm.selectType( pv=True )
+        pm.polySelectConstraint( type=0x0001, mode=3 )
+        pm.select()
+        pVs = pm.ls( selection=True, fl=True )
+        pm.select( cl=True )
+        for v in range(len(pVs)):
+            pm.polyColorPerVertex( pVs[v], colorRGB=colorRGBV, alpha=1.0, cdo=True, notUndoable=True )
+        
+        def update():
+            moveObj( mayaObj[0],  )
 
+# Main Game Function
 def run():
     
     RawMovementVector = IntVector2( 0, 0 )
