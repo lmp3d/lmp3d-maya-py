@@ -235,6 +235,7 @@ def run():
     running = True    
     while running:
         # See if Yout Won achieved
+        print activeEnemies
         if activeEnemies < 1:
             sdl2.SDL_DestroyWindow(ctrlWindow)
             sdl2.SDL_Quit()
@@ -288,8 +289,11 @@ def run():
             testList = enemyList
             testList[i] = updateEnemy( testList[i], playSpaceMinMaxX, playSpaceMinMaxY, deltaM )
             if detectCollision( player[0], testList[i][0][0] ) == True:
-                pm.hide( enemyList[i][0][0] )
-                activeEnemies = activeEnemies - 1
+                vis = pm.attributeQuery( hidden=True )
+                if vis == True:
+                    pm.hide( enemyList[i][0][0] )
+                    activeEnemies = activeEnemies - 1  
+        # redraw viewport        
         pm.refresh( cv=True )
              
             
