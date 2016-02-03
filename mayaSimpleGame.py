@@ -200,7 +200,7 @@ def run():
             controller = sdl2.SDL_GameControllerOpen(i)
     
     # Create SDL Window    
-    ctrlWindow = sdl2.SDL_CreateWindow( b"Control", sdl2.SDL_WINDOWPOS_UNDEFINED, sdl2.SDL_WINDOWPOS_UNDEFINED, 200, 150, sdl2.SDL_WINDOW_INPUT_FOCUS )|sdl2.SDL_WINDOW_HIDDEN )
+    ctrlWindow = sdl2.SDL_CreateWindow( b"Control", sdl2.SDL_WINDOWPOS_UNDEFINED, sdl2.SDL_WINDOWPOS_UNDEFINED, 200, 150, sdl2.SDL_WINDOW_INPUT_FOCUS|sdl2.SDL_WINDOW_HIDDEN )
     if not ctrlWindow:
         print(sdl2.GetError())
         return -1
