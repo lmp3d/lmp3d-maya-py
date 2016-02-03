@@ -121,8 +121,8 @@ def spawnEnemy( minSpawn, maxSpawn):
     spawnMax = rMax - .01
     locX = random.uniform(spawnMin, spawnMax)
     locY = random.uniform(spawnMin, spawnMax)
-    moveVectorX = random.uniform(-3.0,3.0)
-    moveVectorY = random.uniform(-3.0,3.0)
+    moveVectorX = random.uniform(-1.0,1.0)
+    moveVectorY = random.uniform(-1.0,1.0)
     mayaObj = pm.polyCube( name="Enemy", w=1, h=1, d=1, cuv=0, ax=(0,1,0), sx=1, sy=1, sz=1 )
     moveObj(mayaObj[0], locX, 0, locY)
     pm.selectType( pv=True )
@@ -140,10 +140,10 @@ def updateEnemy( Enemy, areaMinMaxX, areaMinMaxY ):
     moveVectorY = Enemy[2]
     aMinMaxX = areaMinMaxX
     aMinMaxY = areaMinMaxY
-    testBoundry = pm.xform( q=True, translation=True, ws=True )
+    testBoundry = pm.xform( Enemy[0][0], q=True, translation=True, ws=True )
     if testBoundry[0] > aMinMaxX or testBoundry[0] < -(aMinMaxX) or testBoundry[2] > aMinMaxY or testBoundry[2] < -(aMinMaxY):
         moveVectorX = -(moveVectorX)
-        moveVectorY - -(moveVectorY)
+        moveVectorY = -(moveVectorY)
     moveObj( mayaObj[0], moveVectorX, 0, moveVectorY )
     return [mayaObj, moveVectorX, moveVectorY]
 
@@ -217,10 +217,10 @@ def run():
         pm.select( cl=True )
         for v in range(len(pVs)):
             pm.polyColorPerVertex( pVs[v], colorRGB=(1.0,0.0,0.0), alpha=1.0, cdo=True, notUndoable=True )
-    pSpeed = 10.0
+    pSpeed = 20.0
     
     for i in range(numEnemies):
-        thisE = Enemy(-(playSpaceMinMaxX), playSpaceMinMaxX)
+        thisE = spawnEnemy(-(playSpaceMinMaxX), playSpaceMinMaxX)
         enemyList.append(thisE)
     print enemyList
     
@@ -231,6 +231,9 @@ def run():
     # Start Game Loop
     running = True    
     while running:
+        # See if Win achieved
+        if len(enemyList < 1):
+            return "You Won"
         #Calculate Delta Time
         lastTime = cTime
         cTime = sdl2.SDL_GetTicks()
@@ -277,6 +280,10 @@ def run():
         moveObj( player[0], pMoveX, 0.0, pMoveY)
         for i in range(len(enemyList)):
             enemyList[i] = updateEnemy( enemyList[i], playSpaceMinMaxX, playSpaceMinMaxY )
+            if detectCollision( player[0], enenmyList[i][0][0]) = True:
+                pm.select( enemyList[i][0][0] )
+                pm.delete()
+                enemyList.pop([i])
         pm.refresh( cv=True )
              
             
