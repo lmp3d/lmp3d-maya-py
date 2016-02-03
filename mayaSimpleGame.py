@@ -240,6 +240,8 @@ def run():
         if activeEnemies < 1:
             sdl2.SDL_DestroyWindow(ctrlWindow)
             sdl2.SDL_Quit()
+            pm.select( all=True )
+            pm.delete()
             return "You Won!"
             
         #Calculate Delta Time
