@@ -236,7 +236,7 @@ def run():
     running = True    
     while running:
         # See if Yout Won achieved
-        print activeEnemies
+        #print activeEnemies
         if activeEnemies < 1:
             sdl2.SDL_DestroyWindow(ctrlWindow)
             sdl2.SDL_Quit()
