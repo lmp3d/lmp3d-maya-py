@@ -134,10 +134,11 @@ def spawnEnemy( minSpawn, maxSpawn):
         pm.polyColorPerVertex( pVs[v], colorRGB=colorRGBV, alpha=1.0, cdo=True, notUndoable=True )
     return [mayaObj, moveVectorX, moveVectorY]
 
-def updateEnemy( Enemy, areaMinMaxX, areaMinMaxY ):
+def updateEnemy( Enemy, areaMinMaxX, areaMinMaxY, deltaT ):
+    speed = 30.0
     mayaObj = Enemy[0]
-    moveVectorX = Enemy[1]
-    moveVectorY = Enemy[2]
+    moveVectorX = Enemy[1] * (deltaT*speed)
+    moveVectorY = Enemy[2] * (deltaT*speed)
     aMinMaxX = areaMinMaxX
     aMinMaxY = areaMinMaxY
     testBoundry = pm.xform( Enemy[0][0], q=True, translation=True, ws=True )
@@ -279,16 +280,13 @@ def run():
         pMoveY = Movement.y * (deltaM*pSpeed)
         moveObj( player[0], pMoveX, 0.0, pMoveY)
         for i in range(len(enemyList)):
-            enemyList[i] = updateEnemy( enemyList[i], playSpaceMinMaxX, playSpaceMinMaxY )
-            if detectCollision( player[0], enemyList[i][0][0] ) == True:
-                pm.select( enemyList[i][0][0] )
-                pm.delete()
-                enemyList.pop([i])
+            testList = enemyList
+            testList[i] = updateEnemy( testList[i], playSpaceMinMaxX, playSpaceMinMaxY, deltaM )
+            if detectCollision( player[0], testList[i][0][0] ) == True:
+                pm.hide( enemyList[i][0][0] )
         pm.refresh( cv=True )
              
             
     sdl2.SDL_DestroyWindow(ctrlWindow)
     sdl2.SDL_Quit()
     return 0
-        
-#sdl2.SDL_WINDOW_HIDDEN
