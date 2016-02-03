@@ -233,7 +233,10 @@ def run():
     running = True    
     while running:
         # See if Win achieved
-        if len(enemyList) < 1 == True:
+        pm.select( vis=True )
+        visObjs = pm.ls( selection=True )
+        pm.select( cl= True)
+        if len(visObjs) = 1 == True:
             return "You Won!"
         #Calculate Delta Time
         lastTime = cTime
