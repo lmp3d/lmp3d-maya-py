@@ -135,7 +135,7 @@ def spawnEnemy( minSpawn, maxSpawn):
     return [mayaObj, moveVectorX, moveVectorY]
 
 def updateEnemy( Enemy, areaMinMaxX, areaMinMaxY, deltaT ):
-    speed = 30.0
+    speed = 50.0
     mayaObj = Enemy[0]
     moveVectorX = Enemy[1]
     moveVectorY = Enemy[2]
@@ -218,7 +218,7 @@ def run():
         pm.select( cl=True )
         for v in range(len(pVs)):
             pm.polyColorPerVertex( pVs[v], colorRGB=(1.0,0.0,0.0), alpha=1.0, cdo=True, notUndoable=True )
-    pSpeed = 20.0
+    pSpeed = 40.0
     
     for i in range(numEnemies):
         thisE = spawnEnemy(-(playSpaceMinMaxX), playSpaceMinMaxX)
@@ -230,6 +230,7 @@ def run():
     cTime = sdl2.SDL_GetTicks()
     
     activeEnemies = numEnemies
+    playerScale = 1.0
     
     # Start Game Loop
     running = True    
@@ -289,10 +290,13 @@ def run():
             testList = enemyList
             testList[i] = updateEnemy( testList[i], playSpaceMinMaxX, playSpaceMinMaxY, deltaM )
             if detectCollision( player[0], testList[i][0][0] ) == True:
-                vis = pm.attributeQuery( hidden=True )
+                vis = pm.getAttr( testList[i][0][0]+'.visibility' )
                 if vis == True:
                     pm.hide( enemyList[i][0][0] )
-                    activeEnemies = activeEnemies - 1  
+                    activeEnemies = activeEnemies - 1
+                    playerScale = playerScale + 0.5
+                    pm.xform( player[0], scale=[playerScale, playerScale, playerScale] )
+                      
         # redraw viewport        
         pm.refresh( cv=True )
              
