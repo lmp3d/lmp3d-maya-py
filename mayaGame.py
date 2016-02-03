@@ -94,7 +94,7 @@ def detectCollision( object1, object2 ):
     if rawBB1[5] < rawBB2[2]:
         return False
     else:
-        return True        
+        return True       
 
 # Invert Vector Function
 def reverseV2( movementVector ):
@@ -133,13 +133,23 @@ class Enemy():
         for v in range(len(pVs)):
             pm.polyColorPerVertex( pVs[v], colorRGB=colorRGBV, alpha=1.0, cdo=True, notUndoable=True )
         
-        def update():
-            moveObj( mayaObj[0],  )
+        def update( areaMinMaxX, areaMinMaxY ):
+            aMinMaxX = areaMinMaxX
+            aMinMaxY = areaMinMaxY
+            testBoundry = pm.xform( q=True, translation=True, ws=True )
+            if testBoundry[0] > aMinMaxX or testBoundry[0] < -(aMinMaxX) or testBoundry[2] > aMinMaxY or testBoundry[2] < -(aMinMaxY):
+                moveVectorX = -(moveVectorX)
+                moveVectorY - -(moveVectorY)
+            moveObj( mayaObj[0], moveVectorX, 0, moveVectorY )
 
 # Main Game Function
 def run():
     
     RawMovementVector = IntVector2( 0, 0 )
+    numEnemies = 15
+    playSpaceMinMaxX = 150
+    playSpaceMinMaxY = 150
+    enemyList = []
     
     # Init SDL
     if sdl2.SDL_Init(sdl2.SDL_INIT_TIMER|sdl2.SDL_INIT_GAMECONTROLLER|sdl2.SDL_INIT_EVENTS) != 0:
@@ -173,6 +183,9 @@ def run():
         for v in range(len(pVs)):
             pm.polyColorPerVertex( pVs[v], colorRGB=(1.0,0.0,0.0), alpha=1.0, cdo=True, notUndoable=True )
     pSpeed = 10.0
+    
+    for i in range(numEnemies):
+        enemyList.append(Enemy())
     
     # Start Ticks
     lastTime = 0
