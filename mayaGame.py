@@ -232,8 +232,8 @@ def run():
     running = True    
     while running:
         # See if Win achieved
-        if len(enemyList < 1):
-            return "You Won"
+        if len(enemyList) < 1 == True:
+            return "You Won!"
         #Calculate Delta Time
         lastTime = cTime
         cTime = sdl2.SDL_GetTicks()
@@ -280,7 +280,7 @@ def run():
         moveObj( player[0], pMoveX, 0.0, pMoveY)
         for i in range(len(enemyList)):
             enemyList[i] = updateEnemy( enemyList[i], playSpaceMinMaxX, playSpaceMinMaxY )
-            if detectCollision( player[0], enenmyList[i][0][0]) = True:
+            if detectCollision( player[0], enemyList[i][0][0] ) == True:
                 pm.select( enemyList[i][0][0] )
                 pm.delete()
                 enemyList.pop([i])
