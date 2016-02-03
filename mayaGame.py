@@ -113,35 +113,69 @@ def moveObj( Object, MoveX, MoveY, MoveZ ):
     z = MoveZ
     pm.move( obj, [ x, y, z ], r=True, wd=True )
 
-class Enemy():
-    def __init__(self, minSpawn, maxSpawn):
-        colorRGBV = [1,1,0]
-        rMax = maxSpawn
-        rMin = minSpawn
-        spawnMin = rMin + .01
-        spawnMax = rMax - .01
-        locX = random.uniform(spawnMin, spawnMax)
-        locY = random.uniform(spawnMin, spawnMax)
-        moveVectorX = random.uniform(-3.0,3.0)
-        moveVectorY = random.uniform(-3.0,3.0)
-        mayaObj = pm.polyCube( name="Enemy", w=1, h=1, d=1, cuv=0, ax=(0,1,0), sx=1, sy=1, sz=1 )
-        moveObj(mayaObj[0], locX, 0, locY)
-        pm.selectType( pv=True )
-        pm.polySelectConstraint( type=0x0001, mode=3 )
-        pm.select()
-        pVs = pm.ls( selection=True, fl=True )
-        pm.select( cl=True )
-        for v in range(len(pVs)):
-            pm.polyColorPerVertex( pVs[v], colorRGB=colorRGBV, alpha=1.0, cdo=True, notUndoable=True )
+def spawnEnemy( minSpawn, maxSpawn):
+    colorRGBV = [1,1,0]
+    rMax = maxSpawn
+    rMin = minSpawn
+    spawnMin = rMin + .01
+    spawnMax = rMax - .01
+    locX = random.uniform(spawnMin, spawnMax)
+    locY = random.uniform(spawnMin, spawnMax)
+    moveVectorX = random.uniform(-3.0,3.0)
+    moveVectorY = random.uniform(-3.0,3.0)
+    mayaObj = pm.polyCube( name="Enemy", w=1, h=1, d=1, cuv=0, ax=(0,1,0), sx=1, sy=1, sz=1 )
+    moveObj(mayaObj[0], locX, 0, locY)
+    pm.selectType( pv=True )
+    pm.polySelectConstraint( type=0x0001, mode=3 )
+    pm.select()
+    pVs = pm.ls( selection=True, fl=True )
+    pm.select( cl=True )
+    for v in range(len(pVs)):
+        pm.polyColorPerVertex( pVs[v], colorRGB=colorRGBV, alpha=1.0, cdo=True, notUndoable=True )
+    return [mayaObj, moveVectorX, moveVectorY]
+
+def updateEnemy( Enemy, areaMinMaxX, areaMinMaxY ):
+    mayaObj = Enemy[0]
+    moveVectorX = Enemy[1]
+    moveVectorY = Enemy[2]
+    aMinMaxX = areaMinMaxX
+    aMinMaxY = areaMinMaxY
+    testBoundry = pm.xform( q=True, translation=True, ws=True )
+    if testBoundry[0] > aMinMaxX or testBoundry[0] < -(aMinMaxX) or testBoundry[2] > aMinMaxY or testBoundry[2] < -(aMinMaxY):
+        moveVectorX = -(moveVectorX)
+        moveVectorY - -(moveVectorY)
+    moveObj( mayaObj[0], moveVectorX, 0, moveVectorY )
+    return [mayaObj, moveVectorX, moveVectorY]
+
+#class Enemy():
+    #def __init__(self, minSpawn, maxSpawn):
+        #colorRGBV = [1,1,0]
+        #rMax = maxSpawn
+        #rMin = minSpawn
+        #spawnMin = rMin + .01
+        #spawnMax = rMax - .01
+        #locX = random.uniform(spawnMin, spawnMax)
+        #locY = random.uniform(spawnMin, spawnMax)
+        #moveVectorX = random.uniform(-3.0,3.0)
+        #moveVectorY = random.uniform(-3.0,3.0)
+        #mayaObj = pm.polyCube( name="Enemy", w=1, h=1, d=1, cuv=0, ax=(0,1,0), sx=1, sy=1, sz=1 )
+        #moveObj(mayaObj[0], locX, 0, locY)
+        #pm.selectType( pv=True )
+        #pm.polySelectConstraint( type=0x0001, mode=3 )
+        #pm.select()
+        #pVs = pm.ls( selection=True, fl=True )
+        #pm.select( cl=True )
+        #for v in range(len(pVs)):
+            #pm.polyColorPerVertex( pVs[v], colorRGB=colorRGBV, alpha=1.0, cdo=True, notUndoable=True )
         
-        def update( areaMinMaxX, areaMinMaxY ):
-            aMinMaxX = areaMinMaxX
-            aMinMaxY = areaMinMaxY
-            testBoundry = pm.xform( q=True, translation=True, ws=True )
-            if testBoundry[0] > aMinMaxX or testBoundry[0] < -(aMinMaxX) or testBoundry[2] > aMinMaxY or testBoundry[2] < -(aMinMaxY):
-                moveVectorX = -(moveVectorX)
-                moveVectorY - -(moveVectorY)
-            moveObj( mayaObj[0], moveVectorX, 0, moveVectorY )
+        #def update( areaMinMaxX, areaMinMaxY ):
+            #aMinMaxX = areaMinMaxX
+            #aMinMaxY = areaMinMaxY
+            #testBoundry = pm.xform( q=True, translation=True, ws=True )
+            #if testBoundry[0] > aMinMaxX or testBoundry[0] < -(aMinMaxX) or testBoundry[2] > aMinMaxY or testBoundry[2] < -(aMinMaxY):
+                #moveVectorX = -(moveVectorX)
+                #moveVectorY - -(moveVectorY)
+            #moveObj( mayaObj[0], moveVectorX, 0, moveVectorY )
 
 # Main Game Function
 def run():
@@ -241,11 +275,13 @@ def run():
         pMoveX = Movement.x * (deltaM*pSpeed)
         pMoveY = Movement.y * (deltaM*pSpeed)
         moveObj( player[0], pMoveX, 0.0, pMoveY)
-        for i in range(len(enemyList))
-            enemylist[i].update( playSpaceMinMaxX, playSpaceMinMaxY )
+        for i in range(len(enemyList)):
+            enemyList[i] = updateEnemy( enemyList[i], playSpaceMinMaxX, playSpaceMinMaxY )
         pm.refresh( cv=True )
              
             
     sdl2.SDL_DestroyWindow(ctrlWindow)
     sdl2.SDL_Quit()
     return 0
+        
+#sdl2.SDL_WINDOW_HIDDEN
