@@ -1,4 +1,4 @@
-# mayaGame.py
+# mayaSimpleGame.py
 # Leif Peterson 2016
 #
 # Implements Input and Game Loop inside Maya Viewport.
@@ -137,15 +137,15 @@ def spawnEnemy( minSpawn, maxSpawn):
 def updateEnemy( Enemy, areaMinMaxX, areaMinMaxY, deltaT ):
     speed = 30.0
     mayaObj = Enemy[0]
-    moveVectorX = Enemy[1] * (deltaT*speed)
-    moveVectorY = Enemy[2] * (deltaT*speed)
+    moveVectorX = Enemy[1]
+    moveVectorY = Enemy[2]
     aMinMaxX = areaMinMaxX
     aMinMaxY = areaMinMaxY
     testBoundry = pm.xform( Enemy[0][0], q=True, translation=True, ws=True )
     if testBoundry[0] > aMinMaxX or testBoundry[0] < -(aMinMaxX) or testBoundry[2] > aMinMaxY or testBoundry[2] < -(aMinMaxY):
         moveVectorX = -(moveVectorX)
         moveVectorY = -(moveVectorY)
-    moveObj( mayaObj[0], moveVectorX, 0, moveVectorY )
+    moveObj( mayaObj[0], (moveVectorX*(deltaT*speed)), 0, (moveVectorY*(deltaT*speed)) )
     return [mayaObj, moveVectorX, moveVectorY]
 
 #class Enemy():
@@ -229,15 +229,17 @@ def run():
     lastTime = 0
     cTime = sdl2.SDL_GetTicks()
     
+    activeEnemies = numEnemies
+    
     # Start Game Loop
     running = True    
     while running:
-        # See if Win achieved
-        pm.select( vis=True )
-        visObjs = pm.ls( selection=True )
-        pm.select( cl= True)
-        if len(visObjs) = 1 == True:
+        # See if Yout Won achieved
+        if activeEnemies < 1:
+            sdl2.SDL_DestroyWindow(ctrlWindow)
+            sdl2.SDL_Quit()
             return "You Won!"
+            
         #Calculate Delta Time
         lastTime = cTime
         cTime = sdl2.SDL_GetTicks()
@@ -287,6 +289,7 @@ def run():
             testList[i] = updateEnemy( testList[i], playSpaceMinMaxX, playSpaceMinMaxY, deltaM )
             if detectCollision( player[0], testList[i][0][0] ) == True:
                 pm.hide( enemyList[i][0][0] )
+                activeEnemies = activeEnemies - 1
         pm.refresh( cv=True )
              
             
