@@ -118,13 +118,14 @@ class Enemy():
         colorRGBV = [1,1,0]
         rMax = maxSpawn
         rMin = minSpawn
-        spawnMin = rMin - .01
+        spawnMin = rMin + .01
         spawnMax = rMax - .01
         locX = random.uniform(spawnMin, spawnMax)
         locY = random.uniform(spawnMin, spawnMax)
         moveVectorX = random.uniform(-3.0,3.0)
         moveVectorY = random.uniform(-3.0,3.0)
         mayaObj = pm.polyCube( name="Enemy", w=1, h=1, d=1, cuv=0, ax=(0,1,0), sx=1, sy=1, sz=1 )
+        moveObj(mayaObj[0], locX, 0, locY)
         pm.selectType( pv=True )
         pm.polySelectConstraint( type=0x0001, mode=3 )
         pm.select()
@@ -147,8 +148,8 @@ def run():
     
     RawMovementVector = IntVector2( 0, 0 )
     numEnemies = 15
-    playSpaceMinMaxX = 150
-    playSpaceMinMaxY = 150
+    playSpaceMinMaxX = 50
+    playSpaceMinMaxY = 50
     enemyList = []
     
     # Init SDL
@@ -185,7 +186,9 @@ def run():
     pSpeed = 10.0
     
     for i in range(numEnemies):
-        enemyList.append(Enemy())
+        thisE = Enemy(-(playSpaceMinMaxX), playSpaceMinMaxX)
+        enemyList.append(thisE)
+    print enemyList
     
     # Start Ticks
     lastTime = 0
@@ -238,11 +241,11 @@ def run():
         pMoveX = Movement.x * (deltaM*pSpeed)
         pMoveY = Movement.y * (deltaM*pSpeed)
         moveObj( player[0], pMoveX, 0.0, pMoveY)
+        for i in range(len(enemyList))
+            enemylist[i].update( playSpaceMinMaxX, playSpaceMinMaxY )
         pm.refresh( cv=True )
              
             
     sdl2.SDL_DestroyWindow(ctrlWindow)
     sdl2.SDL_Quit()
     return 0
-        
-#sdl2.SDL_WINDOW_HIDDEN
