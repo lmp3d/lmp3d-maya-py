@@ -1,4 +1,4 @@
-# mayaSimpleGame.py
+# simpleMayaGame.py
 # Leif Peterson 2016
 #
 # Implements Input and Game Loop inside Maya Viewport.
