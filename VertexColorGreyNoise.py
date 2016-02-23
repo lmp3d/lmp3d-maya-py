@@ -11,18 +11,23 @@ import random
 
 
 
-# Check if Object has Multiple Vertex Color Sets
-def HasMultipleColorSets():
+# Check The Objects Number of Vertex Color Sets
+def NumColorSets():
     ColorSets = pm.polyColorSet( query=True, allColorSets=True )
-    if len(ColorSets) > 1:
-        return True
+    # If there are No Color Sets, Return 0, if there is Exactly 1, Return 1, if there are at least 2, Return 2.
+    if ColorSets == None:
+        return 0
     elif len(ColorSets) == 1:
-        return False
+        return 1
+    elif len(ColorSets) > 1:
+        return 2
         
 # Create Second Vertex Color Set
-def CreateSecondColorSet( SelectedObject ):
-    if HasMultipleColorSets() == True:
-        return 0
+def CreateColorSet( IntIndex ):
+    i = IntIndex
+    colorSetName = 'colorSet%d' % i
+    print colorSetName
+    pm.polyColorSet( create=True, colorSet = colorSetName )
         
         
 #selected = pm.ls( selection=True )        
@@ -36,7 +41,7 @@ def Main():
         return "No Objects Selected"
     elif len(Selected) > 1:
         return "More Than One Object Selected"
-    # If there is a Valid Selection, Execute the script
+    # If there is a Valid Selection
     elif len(Selected) == 1:
         # Get the Selection's Shape
         SelectionShape = Selected[0].getShape()
@@ -45,8 +50,24 @@ def Main():
         # If it is Not, Exit the Function and tell the User
         if IsValidObjType != True:
             return "Selected Object is Not a Polygon Mesh"
+        # If Everything in Valid, Execute The Script 
         else:
-            print "is valid"
+            # Check Number of Color Sets
+            NumOfColorSets = NumColorSets()
+            if NumOfColorSets == 0:
+                # Create 2 Color Sets, Set the first one to .5
+                # and Run the Noise Function on the Second
+                print "TODO"
+                
+            elif NumOfColorSets == 1:
+                # Create colorSet2 and Run Noise Function
+                print "TODO"
+                
+            elif NumColorSets == 2:
+                # Replace the Second Color Set with colorSet2
+                # and Run the Noise Function
+                print "TODO"
+            
         
         
     else:
