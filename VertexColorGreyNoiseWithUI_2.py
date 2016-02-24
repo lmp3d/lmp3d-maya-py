@@ -188,7 +188,7 @@ def GammaNoise( NObject, FMin, FMax ):
     # Select the Object Again
     pm.select( NObjName )               
 
-# Generate a Random Noise Gradient Weighted by the 3D Location 
+# Generate a Random Noise Gradient Weighted by the 3D Location
 def f3DNoise( NObject, FMin, FMax ):
     # Set Local Variables
     NObjName = '%s' % NObject.name()
@@ -201,12 +201,15 @@ def f3DNoise( NObject, FMin, FMax ):
     pm.select()
     # List the Objects Vertices
     ObjectVerts = pm.ls( selection=True, fl=True )
+    RandomVerts = list(ObjectVerts)
+    random.shuffle(RandomVerts)
     pm.select( cl=True )
     # For Every Vertex on the Object, Set its Vertex Color to a random value weighted by the sum of its location
     for v in range(len(ObjectVerts)):
-        loc = pm.xform( ObjectVerts[v], query=True, translation=True, worldSpace=True )
+        loc = pm.xform( RandomVerts[v], query=True, translation=True, worldSpace=True )
+        locValue = math.sqrt(abs(random.choice(loc)))
         RValue = random.uniform( min, max )
-        FValue = (loc[0] + loc[1] + loc[2] + RValue)/4
+        FValue = (locValue + RValue)/2
         pm.polyColorPerVertex( ObjectVerts[v], colorRGB=( FValue, FValue, FValue ), alpha=1.0)
     # Release the Selection Constraints
     pm.polySelectConstraint( mode=0 )
