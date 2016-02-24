@@ -85,8 +85,7 @@ def SimpleNoise( NObject, FMin, FMax ):
 # Primary Function
 def Main():
     Min = 0.0
-    Max = 1.0
-    SelectedNoise = NoiseFunction( Min, Max ) 
+    Max = 1.0 
     # Check that a Valid Selection has been made
     Selected = pm.ls( selection = True ) 
     if len(Selected) == 0:
@@ -122,7 +121,7 @@ def Main():
                 if pm.polyColorSet( query=True, currentColorSet=True, colorSet='colorSet2' ) != True:
                     return "Unable To Set Current Color Set to colorSet2"
                 else:
-                    SelectedNoise.SimpleNoise( Selected[0] )
+                    SimpleNoise( Selected[0], Min, Max )
                     return "Random Noise for 'colorSet2' Was Set for %s" % Selected[0].name()
                 
             elif IntNumOfColorSets == 1:
@@ -133,7 +132,7 @@ def Main():
                     pm.polyColorSet( currentColorSet=True, colorSet='colorSet2' )
                 # Run Noise Function
                 else:
-                    SelectedNoise.SimpleNoise( Selected[0] )
+                    SimpleNoise( Selected[0], Min, Max )
                     return "Random Noise for 'colorSet2' Was Set for %s" % Selected[0].name()
                 
                 
@@ -147,7 +146,7 @@ def Main():
                     pm.polyColorSet( currentColorSet=True, colorSet='colorSet2' )
                 # Run the Noise Function
                 else:
-                    SelectedNoise.SimpleNoise( Selected[0] )
+                    SimpleNoise( Selected[0], Min, Max )
                     return "Random Noise for 'colorSet2' Was Set for %s" % Selected[0].name()
             
         
