@@ -123,15 +123,32 @@ def Main():
                     return "Unable To Set Current Color Set to colorSet2"
                 else:
                     SelectedNoise.SimpleNoise( Selected[0] )
+                    return "Random Noise for 'colorSet2' Was Set for %s" % Selected[0].name()
                 
             elif IntNumOfColorSets == 1:
-                # Create colorSet2 and Run Noise Function
-                print "TODO"
+                # Create 'colorSet2' 
+                CreateColorSet(2)
+                # Set 'colorSet2' as the Active Color Set if it's not the Active Color Set
+                if pm.polyColorSet( query=True, currentColorSet=True, colorSet='colorSet2' ) != True:
+                    pm.polyColorSet( currentColorSet=True, colorSet='colorSet2' )
+                # Run Noise Function
+                else:
+                    SelectedNoise.SimpleNoise( Selected[0] )
+                    return "Random Noise for 'colorSet2' Was Set for %s" % Selected[0].name()
+                
                 
             elif IntNumColorSets == 2:
-                # Replace the Second Color Set with colorSet2
-                # and Run the Noise Function
-                print "TODO"
+                # List All Color Sets
+                AllColorSets = pm.polyColorSet( query=True, allColorSets=True )
+                # Replace the Second Color Set with 'colorSet2'
+                pm.polyColorSet( rename=True, colorSet= AllColorSets[1], newColorSet='colorSet2' )
+                # Set 'colorSet2' as the Active Color Set if it's not the Active Color Set
+                if pm.polyColorSet( query=True, currentColorSet=True, colorSet='colorSet2' ) != True:
+                    pm.polyColorSet( currentColorSet=True, colorSet='colorSet2' )
+                # Run the Noise Function
+                else:
+                    SelectedNoise.SimpleNoise( Selected[0] )
+                    return "Random Noise for 'colorSet2' Was Set for %s" % Selected[0].name()
             
         
         
