@@ -5,6 +5,8 @@
 
 # Import Modules
 import pymel.core as pm
+import sys
+import os
 import random
 import math
 import functools
@@ -45,11 +47,10 @@ def createUI( SWindowTitle, pApplyCallback ):
     # Noise Options - Disabled For Version 1.0 Will Be Enabled in 2.0    
     NoiseOption = pm.optionMenu( 'NoiseFunctions', enable=True )
     pm.menuItem( label='Simple', parent='NoiseFunctions' )
+    pm.menuItem( label='Perlin', parent='NoiseFunctions' )
     pm.menuItem( label='3D Weighted', parent='NoiseFunctions' )
     pm.menuItem( label='Triangular', parent='NoiseFunctions' )
     pm.menuItem( label='Gamma', parent='NoiseFunctions' )
-    pm.menuItem( label='Perlin', parent='NoiseFunctions' )
-    pm.menuItem( label='OpenSimplex', parent='NoiseFunctions' )
     pm.separator( h=10, style='none' )
     
     # Formatting
@@ -75,6 +76,135 @@ def createUI( SWindowTitle, pApplyCallback ):
 
 ## Noise Generation Functions Start Here ##
 
+
+## Perlin Noise Base Functions and Globals ##
+
+# Hash table to assist in generation
+hashMask = 22
+
+gradientMask3D = 15
+
+hash = (151,160,137, 91, 90, 15,131, 13,201, 95, 96, 53,194,233,  7,225,
+        140, 36,103, 30, 69,142,  8, 99, 37,240, 21, 10, 23,190,  6,148,
+        247,120,234, 75,  0, 26,197, 62, 94,252,219,203,117, 35, 11, 32,
+         57,177, 33, 88,237,149, 56, 87,174, 20,125,136,171,168, 68,175,
+         74,165, 71,134,139, 48, 27,166, 77,146,158,231, 83,111,229,122,
+         60,211,133,230,220,105, 92, 41, 55, 46,245, 40,244,102,143, 54,
+         65, 25, 63,161,  1,216, 80, 73,209, 76,132,187,208, 89, 18,169,
+        200,196,135,130,116,188,159, 86,164,100,109,198,173,186,  3, 64,
+         52,217,226,250,124,123,  5,202, 38,147,118,126,255, 82, 85,212,
+        207,206, 59,227, 47, 16, 58, 17,182,189, 28, 42,223,183,170,213,
+        119,248,152,  2, 44,154,163, 70,221,153,101,155,167, 43,172,  9,
+        129, 22, 39,253, 19, 98,108,110, 79,113,224,232,178,185,112,104,
+        218,246, 97,228,251, 34,242,193,238,210,144, 12,191,179,162,241,
+         81, 51,145,235,249, 14,239,107, 49,192,214, 31,181,199,106,157,
+        184, 84,204,176,115,121, 50, 45,127,  4,150,254,138,236,205, 93,
+        222,114, 67, 29, 24, 72,243,141,128,195, 78, 66,215, 61,156,180 )
+
+sizeX = len(hash)
+sizeY = len(hash)
+
+# Smooth function
+def Smooth(t):
+    return t*t*t*(t*(t*float(6.0) - float(15)) + float(10.0)) 
+
+# Lerp function
+def Lerp(t,a,b):
+ 
+    return a + t*(b - a)
+    
+# Gradient   
+def Grad(hashMask,x,y,z):
+
+    if hashMask < 8:
+        u=x
+    else:
+        u=y
+    if hashMask < 4:
+        v=y
+    else:
+        if hashMask == 12 or hashMask == 14:
+            v=x
+        else:
+            v=z
+    if hashMask&1 == 0:
+        first = u
+    else:
+        first = -u
+    if hashMask&2 == 0:
+        second = v
+    else:
+        second = -v
+    return first + second
+
+
+#Dot product of the 3D gradient
+def DotGridGradient(ix, iy,iz, x, y, z): 
+ 
+     #Precomputed (or otherwise) gradient vectors at each grid point X,Y
+     Grad(hashMask,x,y,z)
+ 
+     dx = float(x) - ix
+     dy = float(y) - iy
+     dz = float(z) - iz
+     #Compute the dot-product
+     return dx*Grad(hashMask,ix,0,0) + dy*Grad(hashMask,0,iy,0) + dz*Grad(hashMask,0,0,iz)
+
+# Modify surface with Perlin Noise
+def PerlinNoise(x,y,z, bound):
+    BoundingDimention = bound
+    X0 = int(x)&(BoundingDimention - 1)
+    Y0 = int(y)&(BoundingDimention - 1)
+    Z0 = int(z)&(BoundingDimention - 1)
+    
+    X0 &= hashMask
+    Y0 &= hashMask
+    Z0 &= hashMask
+    
+    X1 = X0 + 1
+    Y1 = Y0 + 1
+    Z1 = Z0 + 1
+    
+    x -= int(x)
+    y -= int(y)
+    z -= int(z)
+    
+    u = Smooth(x)
+    v = Smooth(y)
+    w = Smooth(z)
+    
+    h0 = hash[X0]
+    h1 = hash[Y0]
+    h00 = hash[h0 + Y0]
+    h10 = hash[h1 + Y0]
+    h01 = hash[h0 + Y1]
+    h11 = hash[h1 + Y1]
+    
+    
+    A = Grad(hash[h00 + Z0] & gradientMask3D,x,y,z)
+    B = Grad(hash[h10 + Z0] & gradientMask3D,x,y,z)
+    C = Grad(hash[h01 + Z0] & gradientMask3D,x,y,z)
+    D = Grad(hash[h11 + Z0] & gradientMask3D,x,y,z)
+    E = Grad(hash[h00 + Z1] & gradientMask3D,x,y,z)
+    F = Grad(hash[h10 + Z1] & gradientMask3D,x,y,z)
+    G = Grad(hash[h01 + Z1] & gradientMask3D,x,y,z)
+    H = Grad(hash[h11 + Z1] & gradientMask3D,x,y,z)
+    
+    v000 = DotGridGradient(A,X0,Y0,Z0, y, z)
+    v100 = DotGridGradient(B,X1,Y0,Z0, y, z)
+    v010 = DotGridGradient(C,X0,Y1,Z0, y, z)
+    v110 = DotGridGradient(D,X1,Y1,Z0, y, z)
+    v001 = DotGridGradient(E,X0,Y0,Z1, y, z)
+    v101 = DotGridGradient(F,X1,Y0,Z1, y, z)
+    v011 = DotGridGradient(G,X0,Y1,Z1, y, z)
+    v111 = DotGridGradient(H,X1,Y1,Z1, y, z)
+   
+    
+    tx = Smooth(x)
+    ty = Smooth(y)
+    tz = Smooth(z)
+    
+    return Lerp(Lerp(Lerp(v000, v100, tx), Lerp(v010, v110, tx), ty), Lerp(Lerp(v001, v101, tx),Lerp(v011, v111, tx), ty), tz)
 
 # Check The Objects Number of Vertex Color Sets
 def NumColorSets():
@@ -215,7 +345,40 @@ def f3DNoise( NObject, FMin, FMax ):
     pm.polySelectConstraint( mode=0 )
     pm.selectMode( o=True )
     # Select the Object Again
+    pm.select( NObjName )
+    
+# Generate a Random Noise Gradient Weighted by the 3D Location
+def PerlinNoiseFiller( NObject, FMin, FMax ):
+    # Set Local Variables
+    NObjName = '%s' % NObject.name()
+    Divisions = 15
+    min = FMin
+    max = FMax    
+    # Select the Objects Vertices
+    pm.selectMode( co=True )
+    pm.selectType( pv=True )
+    pm.polySelectConstraint( type=0x0001, mode=3 )
+    pm.select()
+    # List the Objects Vertices
+    ObjectVerts = pm.ls( selection=True, fl=True )
+    random.shuffle(RandomVerts)
+    pm.select( cl=True )
+    # For Every Vertex on the Object, Set its Vertex Color to a random value weighted by the sum of its location
+    for v in range(len(ObjectVerts)):
+        loc = pm.xform( ObjectVerts[v], query=True, translation=True, worldSpace=True )
+        RawValue = PerlinNoise((loc[0]*200),(loc[1]*300),(loc[2]*250), Divisions)
+        ModValue = math.sqrt(abs(RawValue))/100000.0 
+        if ModValue < 0.5:
+            FValue = (ModValue * min)/2.0
+        elif ModValue > 0.5:
+            FValue = (ModValue * max)/2.0  
+        pm.polyColorPerVertex( ObjectVerts[v], colorRGB=( FValue, FValue, FValue ), alpha=1.0)
+    # Release the Selection Constraints
+    pm.polySelectConstraint( mode=0 )
+    pm.selectMode( o=True )
+    # Select the Object Again
     pm.select( NObjName ) 
+     
         
 # Primary Function
 def GenerateVertexColor( StrNoiseOpt, FMax, FMin ):
@@ -260,6 +423,9 @@ def GenerateVertexColor( StrNoiseOpt, FMax, FMin ):
                     if NoiseFunction == 'Simple':
                         SimpleNoise( Selected[0], Min, Max )
                         return "Random Noise for 'colorSet2' Was Set for %s" % Selected[0].name()
+                    elif NoiseFunction == 'Perlin':
+                        PerlinNoiseGen( Selected[0], Min, Max )
+                        return "Perlin Noise was used for 'colorSet2' for %s" % Selected[0].name()
                     elif NoiseFunction == 'Triangular':
                         TriangularNoise( Selected[0], Min, Max )
                         return "Triangular Noise was used for 'colorSet2' for %s" % Selected[0].name()
@@ -282,6 +448,9 @@ def GenerateVertexColor( StrNoiseOpt, FMax, FMin ):
                     if NoiseFunction == 'Simple':
                         SimpleNoise( Selected[0], Min, Max )
                         return "Random Noise for 'colorSet2' Was Set for %s" % Selected[0].name()
+                    elif NoiseFunction == 'Perlin':
+                        PerlinNoiseGen( Selected[0], Min, Max )
+                        return "Perlin Noise was used for 'colorSet2' for %s" % Selected[0].name()
                     elif NoiseFunction == 'Triangular':
                         TriangularNoise( Selected[0], Min, Max )
                         return "Triangular Noise was used for 'colorSet2' for %s" % Selected[0].name()
@@ -305,6 +474,9 @@ def GenerateVertexColor( StrNoiseOpt, FMax, FMin ):
                         if NoiseFunction == 'Simple':
                             SimpleNoise( Selected[0], Min, Max )
                             return "Random Noise for 'colorSet2' Was Set for %s" % Selected[0].name()
+                        elif NoiseFunction == 'Perlin':
+                            PerlinNoiseGen( Selected[0], Min, Max )
+                            return "Perlin Noise was used for 'colorSet2' for %s" % Selected[0].name()
                         elif NoiseFunction == 'Triangular':
                             TriangularNoise( Selected[0], Min, Max )
                             return "Triangular Noise was used for 'colorSet2' for %s" % Selected[0].name()
@@ -326,12 +498,15 @@ def GenerateVertexColor( StrNoiseOpt, FMax, FMin ):
                     if NoiseFunction == 'Simple':
                         SimpleNoise( Selected[0], Min, Max )
                         return "Random Noise for 'colorSet2' Was Set for %s" % Selected[0].name()
+                    elif NoiseFunction == 'Perlin':
+                        PerlinNoiseGen( Selected[0], Min, Max )
+                        return "Perlin Noise was used for 'colorSet2' for %s" % Selected[0].name()
                     elif NoiseFunction == 'Triangular':
                         TriangularNoise( Selected[0], Min, Max )
                         return "Triangular Noise was used for 'colorSet2' for %s" % Selected[0].name()
                     elif NoiseFunction == 'Gamma':
                         GammaNoise( Selected[0], Min, Max )
-                        return "Triangular Noise was used for 'colorSet2' for %s" % Selected[0].name()
+                        return "Gamma Noise was used for 'colorSet2' for %s" % Selected[0].name()
                     elif NoiseFunction == '3D Weighted':
                         f3DNoise( Selected[0], Min, Max )
                         return "3D Weighted Noise was used for 'colorSet2' for %s" % Selected[0].name()
