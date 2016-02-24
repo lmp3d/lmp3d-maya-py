@@ -112,7 +112,7 @@ def Main():
                     pm.polyColorSet( currentColorSet=True, colorSet='colorSet1' )
                     SetMiddleGrey( Selected[0] )
                 pm.polyColorSet( currentColorSet=True, colorSet='colorSet2' )
-                if pm.polyColorSet( query=True, currentColorSet=True, colorSet=True ) != 'colorSet2':
+                if pm.polyColorSet( query=True, currentColorSet=True, colorSet=True ) == 'colorSet1':
                     return "Unable To Set Current Color Set to colorSet2"
                 else:
                     SimpleNoise( Selected[0], Min, Max )
@@ -124,8 +124,7 @@ def Main():
                 # Set 'colorSet2' as the Active Color Set if it's not the Active Color Set
                 if pm.polyColorSet( query=True, currentColorSet=True, colorSet=True ) != 'colorSet2':
                     pm.polyColorSet( currentColorSet=True, colorSet='colorSet2' )
-                # Run Noise Function
-                else:
+                    # Run Noise Function
                     SimpleNoise( Selected[0], Min, Max )
                     return "Random Noise for 'colorSet2' Was Set for %s" % Selected[0].name()
                 
@@ -133,13 +132,19 @@ def Main():
             elif IntNumOfColorSets == 2:
                 # List All Color Sets
                 AllColorSets = pm.polyColorSet( query=True, allColorSets=True )
-                # Replace the Second Color Set with 'colorSet2'
-                pm.polyColorSet( rename=True, colorSet= AllColorSets[1], newColorSet='colorSet2' )
+                # Check for 'colorSet2" 
+                if 'colorSet2' in AllColorSets:
+                    if pm.polyColorSet( query=True, currentColorSet=True, colorSet=True ) != 'colorSet2':
+                        pm.polyColorSet( currentColorSet=True, colorSet='colorSet2' )
+                        # Run the Noise Function
+                        SimpleNoise( Selected[0], Min, Max )
+                        return "Random Noise for 'colorSet2' Was Set for %s" % Selected[0].name()
+                # if it does not exist Create 'colorSet2'
+                CreateColorSet(2)
                 # Set 'colorSet2' as the Active Color Set if it's not the Active Color Set
                 if pm.polyColorSet( query=True, currentColorSet=True, colorSet=True ) != 'colorSet2':
                     pm.polyColorSet( currentColorSet=True, colorSet='colorSet2' )
-                # Run the Noise Function
-                else:
+                    # Run the Noise Function
                     SimpleNoise( Selected[0], Min, Max )
                     return "Random Noise for 'colorSet2' Was Set for %s" % Selected[0].name()
             
