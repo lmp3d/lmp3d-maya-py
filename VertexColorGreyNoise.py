@@ -49,15 +49,9 @@ def SetMiddleGrey( NObject ):
     # Select the Object Again
     pm.select( NObjName )
 
-# Class To Hold Noise Functions
-#class NoiseFunction:
-    
-    # Takes Min and Max Float Values
-   # def __init__(self, FMin, FMax):
-        self.Min = FMin
-        self.Max = FMax
+# Class Noise Functions
 
-    # Generate a Simple Random Noise Gradient 
+# Generate a Simple Random Noise Gradient 
 def SimpleNoise( NObject, FMin, FMax ):
     # Set Local Variables
     NObjName = '%s' % NObject.name()
@@ -73,8 +67,8 @@ def SimpleNoise( NObject, FMin, FMax ):
     pm.select( cl=True )
     # For Every Vertex on the Object, Set its Vertex Color to 0.5 Grey
     for v in range(len(ObjectVerts)):
-    FValue = random.uniform( min, max )
-    pm.polyColorPerVertex( ObjectVerts[v], colorRGB=( FValue, FValue, FValue ), alpha=1.0)
+        FValue = random.uniform( min, max )
+        pm.polyColorPerVertex( ObjectVerts[v], colorRGB=( FValue, FValue, FValue ), alpha=1.0)
     # Release the Selection Constraints
     pm.polySelectConstraint( mode=0 )
     pm.selectMode( o=True )
@@ -109,16 +103,16 @@ def Main():
                 # Create 2 Color Sets, Set the first one to .5
                 # and Run the Noise Function on the Second
                 for i in range(2):
-                    CreateColorSet(i)
+                    CreateColorSet(i+1)
                 # If the Current Color Set is colorSet1 set it to 0.5 Grey
-                if pm.polyColorSet( query=True, colorSet='colorSet1', currentColorSet=True ) == True:
+                if pm.polyColorSet( query=True, colorSet=True, currentColorSet=True ) == 'colorSet1':
                     SetMiddleGrey( Selected[0] )
                 # Else If it is not the Current Color Set, Set to the Current and Set it's Color to 0.5 Grey
-                elif pm.polyColorSet( query=True, colorSet='colorSet1', currentColorSet=True ) == False:
+                elif pm.polyColorSet( query=True, colorSet=True, currentColorSet=True ) != 'colorSet1':
                     pm.polyColorSet( currentColorSet=True, colorSet='colorSet1' )
                     SetMiddleGrey( Selected[0] )
                 pm.polyColorSet( currentColorSet=True, colorSet='colorSet2' )
-                if pm.polyColorSet( query=True, currentColorSet=True, colorSet='colorSet2' ) != True:
+                if pm.polyColorSet( query=True, currentColorSet=True, colorSet=True ) != 'colorSet2':
                     return "Unable To Set Current Color Set to colorSet2"
                 else:
                     SimpleNoise( Selected[0], Min, Max )
@@ -128,7 +122,7 @@ def Main():
                 # Create 'colorSet2' 
                 CreateColorSet(2)
                 # Set 'colorSet2' as the Active Color Set if it's not the Active Color Set
-                if pm.polyColorSet( query=True, currentColorSet=True, colorSet='colorSet2' ) != True:
+                if pm.polyColorSet( query=True, currentColorSet=True, colorSet=True ) != 'colorSet2':
                     pm.polyColorSet( currentColorSet=True, colorSet='colorSet2' )
                 # Run Noise Function
                 else:
@@ -142,7 +136,7 @@ def Main():
                 # Replace the Second Color Set with 'colorSet2'
                 pm.polyColorSet( rename=True, colorSet= AllColorSets[1], newColorSet='colorSet2' )
                 # Set 'colorSet2' as the Active Color Set if it's not the Active Color Set
-                if pm.polyColorSet( query=True, currentColorSet=True, colorSet='colorSet2' ) != True:
+                if pm.polyColorSet( query=True, currentColorSet=True, colorSet=True ) != 'colorSet2':
                     pm.polyColorSet( currentColorSet=True, colorSet='colorSet2' )
                 # Run the Noise Function
                 else:
