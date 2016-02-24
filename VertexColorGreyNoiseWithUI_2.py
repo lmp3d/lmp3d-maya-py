@@ -28,13 +28,13 @@ def createUI( SWindowTitle, pApplyCallback ):
     pm.text( label='Min Value:' )
         
     # Minimum Value Field, Default = 0.0, min = 0.0, max = 1.0, invisible slider step = 0.01
-    MinValueField = pm.floatField( value=0.0, minValue=0.0, maxValue=1.0, step=0.01 )
+    MinValueField = pm.floatField( value=0.0, minValue=0.0, maxValue=1.0, step=0.01, annotation="This is the Minimum Value, It Can't Go below 0.0 or above 1.0" )
     pm.separator( h=10, style='none' )
         
     pm.text( label='Max Value:' )
         
     # Maximum Value Field, Default = 1.0, min = 0.0, max = 1.0, invisible slider step = 0.01
-    MaxValueField = pm.floatField( value=1.0, minValue=0.0, maxValue=1.0, step=0.01 )
+    MaxValueField = pm.floatField( value=1.0, minValue=0.0, maxValue=1.0, step=0.01, annotation="This is the Maximum Value, It Can't Go below 0.0 or above 1.0" )
     pm.separator( h=10, style='none' )
     
     # Formatting
@@ -44,13 +44,13 @@ def createUI( SWindowTitle, pApplyCallback ):
         
     pm.text( label='Noise Type:' )
     
-    # Noise Options - Disabled For Version 1.0 Will Be Enabled in 2.0    
-    NoiseOption = pm.optionMenu( 'NoiseFunctions', enable=True )
-    pm.menuItem( label='Simple', parent='NoiseFunctions' )
-    pm.menuItem( label='Perlin', parent='NoiseFunctions' )
-    pm.menuItem( label='3D Weighted', parent='NoiseFunctions' )
-    pm.menuItem( label='Triangular', parent='NoiseFunctions' )
-    pm.menuItem( label='Gamma', parent='NoiseFunctions' )
+    # Noise Options - Enabled in 2.0    
+    NoiseOption = pm.optionMenu( 'NoiseFunctions', enable=True, annotation="Select Alternate Distributions and Generation Functions Here" )
+    pm.menuItem( label='Simple', parent='NoiseFunctions', annotation="A Simple Psuedo Random Noise Function that generates Random Values Between Min and Max" )
+    pm.menuItem( label='Perlin', parent='NoiseFunctions', annotation="Try Moving the Object Around for More Variety with Perlin Noise" )
+    pm.menuItem( label='3D Weighted', parent='NoiseFunctions', annotation="This Function Uses a Mixed Up Vertex List Randomly Adjust the Appearance of a Psuedo Random Number Generation" )
+    pm.menuItem( label='Triangular', parent='NoiseFunctions', annotation="This Function Uses a Psuedo Random Number Generator with a Triangular Distribution" )
+    pm.menuItem( label='Gamma', parent='NoiseFunctions', annotation="This Function Uses the Gamma Distribution, Does Not Work Well with Low Min Values, Suggestion Minimum 0.1" )
     pm.separator( h=10, style='none' )
     
     # Formatting
@@ -391,7 +391,7 @@ def f3DNoise( NObject, FMin, FMax ):
         loc = pm.xform( RandomVerts[v], query=True, translation=True, worldSpace=True )
         locValue = math.sqrt(abs(random.choice(loc)))
         RValue = random.uniform( min, max )
-        FValue = (locValue + RValue)/2
+        FValue = (locValue * RValue)/2
         pm.polyColorPerVertex( ObjectVerts[v], colorRGB=( FValue, FValue, FValue ), alpha=1.0)
     # Release the Selection Constraints
     pm.polySelectConstraint( mode=0 )
@@ -418,11 +418,8 @@ def PerlinNoiseFiller( NObject, FMin, FMax ):
     for v in range(len(ObjectVerts)):
         loc = pm.xform( ObjectVerts[v], query=True, translation=True, worldSpace=True )
         RawValue = PerlinNoise((loc[0]*200),(loc[1]*300),(loc[2]*250), Divisions)
-        ModValue = math.fabs(math.cos(RawValue/10000.0)) 
-        if ModValue < 0.5:
-            FValue = max(min(ModValueq, Vmax), Vmin)
-        elif ModValue > 0.5:
-            FValue = max(min(ModValue, Vmax), Vmin)  
+        ModValue = math.fabs(math.cos(RawValue/10.0)) 
+        FValue = max(min(ModValue, Vmax), Vmin)  
         pm.polyColorPerVertex( ObjectVerts[v], colorRGB=( FValue, FValue, FValue ), alpha=1.0)
     # Release the Selection Constraints
     pm.polySelectConstraint( mode=0 )
