@@ -50,36 +50,36 @@ def SetMiddleGrey( NObject ):
     pm.select( NObjName )
 
 # Class To Hold Noise Functions
-class NoiseFunction:
+#class NoiseFunction:
     
     # Takes Min and Max Float Values
-    def __init__(self, FMin, FMax):
+   # def __init__(self, FMin, FMax):
         self.Min = FMin
         self.Max = FMax
 
     # Generate a Simple Random Noise Gradient 
-    def SimpleNoise( self, NObject ):
-        # Set Local Variables
-        NObjName = '%s' % self.NObject.name()
-        min = self.Min
-        max = self.Max    
-        # Select the Objects Vertices
-        pm.selectMode( co=True )
-        pm.selectType( pv=True )
-        pm.polySelectConstraint( type=0x0001, mode=3 )
-        pm.select()
-        # List the Objects Vertices
-        ObjectVerts = pm.ls( selection=True, fl=True )
-        pm.select( cl=True )
-        # For Every Vertex on the Object, Set its Vertex Color to 0.5 Grey
-        for v in range(len(ObjectVerts)):
-            FValue = random.uniform( min, max )
-            pm.polyColorPerVertex( ObjectVerts[v], colorRGB=( FValue, FValue, FValue ), alpha=1.0)
-        # Release the Selection Constraints
-        pm.polySelectConstraint( mode=0 )
-        pm.selectMode( o=True )
-        # Select the Object Again
-        pm.select( NObjName )           
+def SimpleNoise( NObject, FMin, FMax ):
+    # Set Local Variables
+    NObjName = '%s' % NObject.name()
+    min = FMin
+    max = FMax    
+    # Select the Objects Vertices
+    pm.selectMode( co=True )
+    pm.selectType( pv=True )
+    pm.polySelectConstraint( type=0x0001, mode=3 )
+    pm.select()
+    # List the Objects Vertices
+    ObjectVerts = pm.ls( selection=True, fl=True )
+    pm.select( cl=True )
+    # For Every Vertex on the Object, Set its Vertex Color to 0.5 Grey
+    for v in range(len(ObjectVerts)):
+    FValue = random.uniform( min, max )
+    pm.polyColorPerVertex( ObjectVerts[v], colorRGB=( FValue, FValue, FValue ), alpha=1.0)
+    # Release the Selection Constraints
+    pm.polySelectConstraint( mode=0 )
+    pm.selectMode( o=True )
+    # Select the Object Again
+    pm.select( NObjName )           
               
         
 # Primary Function
@@ -137,7 +137,7 @@ def Main():
                     return "Random Noise for 'colorSet2' Was Set for %s" % Selected[0].name()
                 
                 
-            elif IntNumColorSets == 2:
+            elif IntNumOfColorSets == 2:
                 # List All Color Sets
                 AllColorSets = pm.polyColorSet( query=True, allColorSets=True )
                 # Replace the Second Color Set with 'colorSet2'
