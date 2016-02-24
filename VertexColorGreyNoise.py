@@ -77,9 +77,9 @@ def SimpleNoise( NObject, FMin, FMax ):
               
         
 # Primary Function
-def Main():
-    Min = 0.0
-    Max = 1.0 
+def Main( FMin, FMax ):
+    Min = FMin
+    Max = FMax 
     # Check that a Valid Selection has been made
     Selected = pm.ls( selection = True ) 
     if len(Selected) == 0:
