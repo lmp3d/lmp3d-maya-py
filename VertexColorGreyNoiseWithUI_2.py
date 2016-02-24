@@ -361,7 +361,6 @@ def PerlinNoiseFiller( NObject, FMin, FMax ):
     pm.select()
     # List the Objects Vertices
     ObjectVerts = pm.ls( selection=True, fl=True )
-    random.shuffle(RandomVerts)
     pm.select( cl=True )
     # For Every Vertex on the Object, Set its Vertex Color to a random value weighted by the sum of its location
     for v in range(len(ObjectVerts)):
@@ -424,7 +423,7 @@ def GenerateVertexColor( StrNoiseOpt, FMax, FMin ):
                         SimpleNoise( Selected[0], Min, Max )
                         return "Random Noise for 'colorSet2' Was Set for %s" % Selected[0].name()
                     elif NoiseFunction == 'Perlin':
-                        PerlinNoiseGen( Selected[0], Min, Max )
+                        PerlinNoiseFiller( Selected[0], Min, Max )
                         return "Perlin Noise was used for 'colorSet2' for %s" % Selected[0].name()
                     elif NoiseFunction == 'Triangular':
                         TriangularNoise( Selected[0], Min, Max )
@@ -449,7 +448,7 @@ def GenerateVertexColor( StrNoiseOpt, FMax, FMin ):
                         SimpleNoise( Selected[0], Min, Max )
                         return "Random Noise for 'colorSet2' Was Set for %s" % Selected[0].name()
                     elif NoiseFunction == 'Perlin':
-                        PerlinNoiseGen( Selected[0], Min, Max )
+                        PerlinNoiseFiller( Selected[0], Min, Max )
                         return "Perlin Noise was used for 'colorSet2' for %s" % Selected[0].name()
                     elif NoiseFunction == 'Triangular':
                         TriangularNoise( Selected[0], Min, Max )
@@ -475,7 +474,7 @@ def GenerateVertexColor( StrNoiseOpt, FMax, FMin ):
                             SimpleNoise( Selected[0], Min, Max )
                             return "Random Noise for 'colorSet2' Was Set for %s" % Selected[0].name()
                         elif NoiseFunction == 'Perlin':
-                            PerlinNoiseGen( Selected[0], Min, Max )
+                            PerlinNoiseFiller( Selected[0], Min, Max )
                             return "Perlin Noise was used for 'colorSet2' for %s" % Selected[0].name()
                         elif NoiseFunction == 'Triangular':
                             TriangularNoise( Selected[0], Min, Max )
@@ -499,7 +498,7 @@ def GenerateVertexColor( StrNoiseOpt, FMax, FMin ):
                         SimpleNoise( Selected[0], Min, Max )
                         return "Random Noise for 'colorSet2' Was Set for %s" % Selected[0].name()
                     elif NoiseFunction == 'Perlin':
-                        PerlinNoiseGen( Selected[0], Min, Max )
+                        PerlinNoiseFiller( Selected[0], Min, Max )
                         return "Perlin Noise was used for 'colorSet2' for %s" % Selected[0].name()
                     elif NoiseFunction == 'Triangular':
                         TriangularNoise( Selected[0], Min, Max )
