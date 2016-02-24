@@ -1,5 +1,6 @@
 # VertexColorGreyNoiseWithUI.py
 
+#########################
 ##     Version 2.0     ##
 ## Leif Peterson  2016 ##
 
@@ -10,6 +11,7 @@ import os
 import random
 import math
 import functools
+
 
 ## UI Function ##
 def createUI( SWindowTitle, pApplyCallback ):
@@ -73,13 +75,13 @@ def createUI( SWindowTitle, pApplyCallback ):
         
     pm.showWindow()       
 
-
+###########################################
 ## Noise Generation Functions Start Here ##
+###########################################
 
+## Perlin Noise Base Functions and Global Variables ##
 
-## Perlin Noise Base Functions and Globals ##
-
-# Hash table to assist in generation
+# Hash table to assist in generation, and Other Variables for the Perlin Noise
 hashMask = 22
 
 gradientMask3D = 15
@@ -156,11 +158,11 @@ hash = (151,160,137, 91, 90, 15,131, 13,201, 95, 96, 53,194,233,  7,225,
 sizeX = len(hash)
 sizeY = len(hash)
 
-# Smooth function
+# Smoothing Function
 def Smooth(t):
     return t*t*t*(t*(t*float(6.0) - float(15)) + float(10.0)) 
 
-# Lerp function
+# Linear Interpolate Function
 def Lerp(t,a,b):
  
     return a + t*(b - a)
@@ -190,19 +192,18 @@ def Grad(hashMask,x,y,z):
     return first + second
 
 
-#Dot product of the 3D gradient
+# Dot product of the 3D gradient
 def DotGridGradient(ix, iy,iz, x, y, z): 
  
-     #Precomputed (or otherwise) gradient vectors at each grid point X,Y
      Grad(hashMask,x,y,z)
  
      dx = float(x) - ix
      dy = float(y) - iy
      dz = float(z) - iz
-     #Compute the dot-product
+     # Compute the dot product
      return dx*Grad(hashMask,ix,0,0) + dy*Grad(hashMask,0,iy,0) + dz*Grad(hashMask,0,0,iz)
 
-# Modify surface with Perlin Noise
+# Generate Perlin Noise Values
 def PerlinNoise(x,y,z, bound):
     BoundingDimention = bound
     X0 = int(x)&(BoundingDimention - 1)
@@ -258,6 +259,7 @@ def PerlinNoise(x,y,z, bound):
     
     return Lerp(Lerp(Lerp(v000, v100, tx), Lerp(v010, v110, tx), ty), Lerp(Lerp(v001, v101, tx),Lerp(v011, v111, tx), ty), tz)
 
+
 # Check The Objects Number of Vertex Color Sets
 def NumColorSets():
     ColorSets = pm.polyColorSet( query=True, allColorSets=True )
@@ -268,6 +270,7 @@ def NumColorSets():
         return 1
     elif len(ColorSets) > 1:
         return 2
+  
         
 # Create Second Vertex Color Set
 def CreateColorSet( IntIndex ):
@@ -275,6 +278,7 @@ def CreateColorSet( IntIndex ):
     colorSetName = 'colorSet%d' % i
     print colorSetName
     pm.polyColorSet( create=True, colorSet = colorSetName )
+
 
 # Set Vertex Color to 0.5 Grey
 def SetMiddleGrey( NObject ):
@@ -295,6 +299,7 @@ def SetMiddleGrey( NObject ):
     pm.selectMode( o=True )
     # Select the Object Again
     pm.select( NObjName )
+
 
 ### Noise Functions ##
 
@@ -321,6 +326,7 @@ def SimpleNoise( NObject, FMin, FMax ):
     pm.selectMode( o=True )
     # Select the Object Again
     pm.select( NObjName )           
+
     
 # Generate a Triangular Random Noise Gradient 
 def TriangularNoise( NObject, FMin, FMax ):
@@ -346,6 +352,7 @@ def TriangularNoise( NObject, FMin, FMax ):
     # Select the Object Again
     pm.select( NObjName )  
 
+
 # Generate a Gamma Distribution Random Noise Gradient 
 def GammaNoise( NObject, FMin, FMax ):
     # Set Local Variables
@@ -369,6 +376,7 @@ def GammaNoise( NObject, FMin, FMax ):
     pm.selectMode( o=True )
     # Select the Object Again
     pm.select( NObjName )               
+
 
 # Generate a Random Noise Gradient Weighted by the 3D Location
 def f3DNoise( NObject, FMin, FMax ):
@@ -398,8 +406,9 @@ def f3DNoise( NObject, FMin, FMax ):
     pm.selectMode( o=True )
     # Select the Object Again
     pm.select( NObjName )
+
     
-# Generate a Random Noise Gradient Weighted by the 3D Location
+# Generate a Perlin Noise Based Gradient Based 3D Location
 def PerlinNoiseFiller( NObject, FMin, FMax ):
     # Set Local Variables
     NObjName = '%s' % NObject.name()
@@ -452,6 +461,7 @@ def GenerateVertexColor( StrNoiseOpt, FMax, FMin ):
         else:
             # Check Number of Color Sets
             IntNumOfColorSets = NumColorSets()
+            # Executes if There are No Color Sets
             if IntNumOfColorSets == 0:
                 # Create 2 Color Sets, Set the first one to .5
                 # and Run the Noise Function on the Second
@@ -486,6 +496,7 @@ def GenerateVertexColor( StrNoiseOpt, FMax, FMin ):
                     else:
                         return "Invalid Noise Function Sepcified"
                         
+            # Executes when there is only one Color Set            
             elif IntNumOfColorSets == 1:
                 # Create 'colorSet2' 
                 CreateColorSet(2)
@@ -510,7 +521,8 @@ def GenerateVertexColor( StrNoiseOpt, FMax, FMin ):
                         return "3D Weighted Noise was used for 'colorSet2' for %s" % Selected[0].name()
                     else:
                         return "Invalid Noise Function Sepcified"
-                
+            
+            # Executes when there are 2 or More Color Sets    
             elif IntNumOfColorSets == 2:
                 # List All Color Sets
                 AllColorSets = pm.polyColorSet( query=True, allColorSets=True )
@@ -518,7 +530,7 @@ def GenerateVertexColor( StrNoiseOpt, FMax, FMin ):
                 if 'colorSet2' in AllColorSets:
                     if pm.polyColorSet( query=True, currentColorSet=True, colorSet=True ) != 'colorSet2':
                         pm.polyColorSet( currentColorSet=True, colorSet='colorSet2' )
-                        # Run the Noise Function
+                        # Run the Noise Functions
                         if NoiseFunction == 'Simple':
                             SimpleNoise( Selected[0], Min, Max )
                             return "Random Noise for 'colorSet2' Was Set for %s" % Selected[0].name()
@@ -542,7 +554,7 @@ def GenerateVertexColor( StrNoiseOpt, FMax, FMin ):
                 # Set 'colorSet2' as the Active Color Set if it's not the Active Color Set
                 if pm.polyColorSet( query=True, currentColorSet=True, colorSet=True ) != 'colorSet2':
                     pm.polyColorSet( currentColorSet=True, colorSet='colorSet2' )
-                    # Run the Noise Function
+                    # Run the Noise Functions
                     if NoiseFunction == 'Simple':
                         SimpleNoise( Selected[0], Min, Max )
                         return "Random Noise for 'colorSet2' Was Set for %s" % Selected[0].name()
@@ -565,7 +577,7 @@ def GenerateVertexColor( StrNoiseOpt, FMax, FMin ):
     else:
         return "Unknown Error Occurred"
         
-        
+# Executed When Apply Button is Pressed        
 def applyCallback( pNoiseOption, pMaxValueField, pMinValueField, *pArgs ):
     
     NoiseOptionState = pm.optionMenu( pNoiseOption, query=True, value=True )
@@ -574,5 +586,5 @@ def applyCallback( pNoiseOption, pMaxValueField, pMinValueField, *pArgs ):
     
     GenerateVertexColor( NoiseOptionState, MaxValue, MinValue )   
     
-    
+# Call the UI Function    
 createUI( 'NoiseGen', applyCallback )
