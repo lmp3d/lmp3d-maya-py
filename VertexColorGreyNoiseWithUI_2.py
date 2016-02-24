@@ -265,7 +265,7 @@ def GenerateVertexColor( StrNoiseOpt, FMax, FMin ):
                         return "Gamma Noise Distribution was used for 'colorSet2' for %s" % Selected[0].name()
                     elif NoiseFunction == '3D Weighted':
                         f3DNoise( Selected[0], Min, Max )
-                        return "3D Weighted Noise was used for 'colorSet2' for %s" % Selected[0].name(
+                        return "3D Weighted Noise was used for 'colorSet2' for %s" % Selected[0].name()
                     else:
                         return "Invalid Noise Function Sepcified"
                         
@@ -287,7 +287,7 @@ def GenerateVertexColor( StrNoiseOpt, FMax, FMin ):
                         return "Gamma Noise Distribution was used for 'colorSet2' for %s" % Selected[0].name()
                     elif NoiseFunction == '3D Weighted':
                         f3DNoise( Selected[0], Min, Max )
-                        return "3D Weighted Noise was used for 'colorSet2' for %s" % Selected[0].name(
+                        return "3D Weighted Noise was used for 'colorSet2' for %s" % Selected[0].name()
                     else:
                         return "Invalid Noise Function Sepcified"
                 
